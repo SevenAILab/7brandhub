@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1768649654793,
+      "tag": "0000_legal_microbe",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1768649914755,
+      "tag": "0001_polite_proudstar",
+      "breakpoints": true
+    }
+  ]
+}
