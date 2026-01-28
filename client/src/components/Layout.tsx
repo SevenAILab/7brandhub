@@ -183,105 +183,106 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link href="/join">
               <span className="py-2 border-b border-border/50 block cursor-pointer">服务商入驻</span>
             </Link>
-            <span className="py-2 border-b border-border/50 block cursor-pointer">关于我们</span>
-          </Link>
-          <Link href="/blog">
-            <span className="py-2 border-b border-border/50 block cursor-pointer">品牌洞察</span>
-          </Link>
+            <Link href="/about">
+              <span className="py-2 border-b border-border/50 block cursor-pointer">关于我们</span>
+            </Link>
+            <Link href="/blog">
+              <span className="py-2 border-b border-border/50 block cursor-pointer">品牌洞察</span>
+            </Link>
 
-          {isAuthenticated && user && (
-            <>
-              <Link href="/favorites">
-                <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
-                  <Heart className="w-5 h-5" /> 我的收藏
-                </span>
-              </Link>
-              {user.role === 'admin' && (
-                <Link href="/admin">
+            {isAuthenticated && user && (
+              <>
+                <Link href="/favorites">
                   <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
-                    <Settings className="w-5 h-5" /> 管理后台
+                    <Heart className="w-5 h-5" /> 我的收藏
                   </span>
                 </Link>
-              )}
-            </>
-          )}
-
-          <div className="pt-4 flex flex-col gap-4">
-            {isAuthenticated ? (
-              <Button
-                variant="outline"
-                className="w-full rounded-full py-6 text-lg"
-                onClick={handleLogout}
-              >
-                退出登录
-              </Button>
-            ) : (
-              <Button
-                className="w-full rounded-full py-6 text-lg"
-                onClick={handleLogin}
-              >
-                登录 / 注册
-              </Button>
+                {user.role === 'admin' && (
+                  <Link href="/admin">
+                    <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
+                      <Settings className="w-5 h-5" /> 管理后台
+                    </span>
+                  </Link>
+                )}
+              </>
             )}
-          </div>
-        </nav>
-    </div>
-      </header >
 
-    {/* Main Content */ }
-    < main className = "flex-1 pt-20" >
-      { children }
-      </main >
-
-    {/* Footer */ }
-    < footer className = "bg-secondary/30 border-t border-border/50 py-12 mt-20" >
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center text-white text-xs font-bold">7</div>
-              <span className="font-bold text-lg">BrandHub</span>
+            <div className="pt-4 flex flex-col gap-4">
+              {isAuthenticated ? (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-full py-6 text-lg"
+                  onClick={handleLogout}
+                >
+                  退出登录
+                </Button>
+              ) : (
+                <Button
+                  className="w-full rounded-full py-6 text-lg"
+                  onClick={handleLogin}
+                >
+                  登录 / 注册
+                </Button>
+              )}
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              垂直于品牌服务的智能检索平台，帮助品牌方快速找到靠谱的本地服务商。
-            </p>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 pt-20">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-secondary/30 border-t border-border/50 py-12 mt-20">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="col-span-1 md:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center text-white text-xs font-bold">7</div>
+                <span className="font-bold text-lg">BrandHub</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                垂直于品牌服务的智能检索平台，帮助品牌方快速找到靠谱的本地服务商。
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-sm">平台服务</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/providers"><span className="hover:text-primary transition-colors cursor-pointer">找服务商</span></Link></li>
+                <li><Link href="/categories"><span className="hover:text-primary transition-colors cursor-pointer">服务分类</span></Link></li>
+                <li><Link href="/join"><span className="hover:text-primary transition-colors cursor-pointer">服务商入驻</span></Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-sm">关于我们</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/about"><span className="hover:text-primary transition-colors cursor-pointer">关于平台</span></Link></li>
+                <li><Link href="/about"><span className="hover:text-primary transition-colors cursor-pointer">联系我们</span></Link></li>
+                <li><Link href="/blog"><span className="hover:text-primary transition-colors cursor-pointer">品牌洞察</span></Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4 text-sm">联系方式</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>邮箱: contact@7brandhub.com</li>
+                <li>工作时间: 周一至周五 9:00-18:00</li>
+              </ul>
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-4 text-sm">平台服务</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/providers"><span className="hover:text-primary transition-colors cursor-pointer">找服务商</span></Link></li>
-              <li><Link href="/categories"><span className="hover:text-primary transition-colors cursor-pointer">服务分类</span></Link></li>
-              <li><Link href="/join"><span className="hover:text-primary transition-colors cursor-pointer">服务商入驻</span></Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4 text-sm">关于我们</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/about"><span className="hover:text-primary transition-colors cursor-pointer">关于平台</span></Link></li>
-              <li><Link href="/about"><span className="hover:text-primary transition-colors cursor-pointer">联系我们</span></Link></li>
-              <li><Link href="/blog"><span className="hover:text-primary transition-colors cursor-pointer">品牌洞察</span></Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4 text-sm">联系方式</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>邮箱: contact@7brandhub.com</li>
-              <li>工作时间: 周一至周五 9:00-18:00</li>
-            </ul>
+          <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+            <p>© 2026 7BrandHub. All rights reserved.</p>
+            <div className="flex gap-6">
+              <span className="hover:text-foreground transition-colors cursor-pointer">隐私政策</span>
+              <span className="hover:text-foreground transition-colors cursor-pointer">服务条款</span>
+            </div>
           </div>
         </div>
-
-        <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© 2026 7BrandHub. All rights reserved.</p>
-          <div className="flex gap-6">
-            <span className="hover:text-foreground transition-colors cursor-pointer">隐私政策</span>
-            <span className="hover:text-foreground transition-colors cursor-pointer">服务条款</span>
-          </div>
-        </div>
-      </div>
       </footer >
     </div >
   );
