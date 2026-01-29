@@ -2,9 +2,11 @@ import type { CreateExpressContextOptions } from "@trpc/server/adapters/express"
 import type { User } from "../../drizzle/schema";
 import { authService } from "./sdk";
 
+import type { Request, Response } from "express";
+
 export type TrpcContext = {
-  req: CreateExpressContextOptions["req"];
-  res: CreateExpressContextOptions["res"];
+  req: Request;
+  res: Response;
   user: User | null;
 };
 

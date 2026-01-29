@@ -1,5 +1,5 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-import type { Express, Request, Response } from "express";
+import type { Request, Response, Application } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { authService } from "./sdk";
@@ -16,7 +16,7 @@ const registerSchema = z.object({
   name: z.string().min(1),
 });
 
-export function registerAuthRoutes(app: Express) {
+export function registerAuthRoutes(app: Application) {
   // Login endpoint
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
