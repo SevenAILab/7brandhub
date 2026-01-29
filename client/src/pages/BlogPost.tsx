@@ -19,7 +19,7 @@ export default function BlogPost() {
         try {
             await navigator.share({
                 title: post?.title,
-                text: post?.excerpt,
+                text: post?.excerpt ?? undefined,
                 url: window.location.href,
             });
         } catch {

@@ -1,4 +1,15 @@
-export const ENV = {
+export const ENV: {
+  cookieSecret: string;
+  databaseUrl: string;
+  databaseAuthToken: string;
+  adminEmail: string;
+  isProduction: boolean;
+  forgeApiUrl: string;
+  forgeApiKey: string;
+  openaiApiKey: string;
+  replicateApiKey: string;
+  googleMapsApiKey: string;
+} = {
   cookieSecret: process.env.JWT_SECRET ?? "dev-secret-key-change-in-production",
   databaseUrl: process.env.DATABASE_URL ?? "",
   databaseAuthToken: process.env.DATABASE_AUTH_TOKEN ?? "",
