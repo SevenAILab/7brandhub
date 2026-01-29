@@ -21,13 +21,26 @@ import path from "path";
 let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance
+// Lazily create the drizzle instance
 export async function getDb() {
   if (!_db) {
     try {
-      const dbPath = path.resolve(process.cwd(), "data.db");
-      const client = createClient({ url: `file:${dbPath}` });
-      _db = drizzle(client);
-      console.log("[Database] Connected to SQLite at:", dbPath);
+      if (ENV.databaseUrl && ENV.databaseAuthToken) {
+        // Production / Remote DB
+        const client = createClient({
+          url: ENV.databaseUrl,
+          authToken: ENV.databaseAuthToken,
+        });
+        _db = drizzle(client);
+        console.log("[Database] Connected to LibSQL/Turso at:", ENV.databaseUrl);
+      } else {
+        // Local Dev DB
+        const dbPath = path.resolve(process.cwd(), "data.db");
+        // Ensure directory exists if needed, but usually cwd is fine
+        const client = createClient({ url: `file:${dbPath}` });
+        _db = drizzle(client);
+        console.log("[Database] Connected to local SQLite at:", dbPath);
+      }
     } catch (error) {
       console.error("[Database] Failed to connect:", error);
       throw error;
