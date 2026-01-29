@@ -7,10 +7,19 @@ import path from "path";
 import { PROVIDERS, CITIES } from "../constants";
 import { ServiceCategory } from "../types";
 
-const dbPath = path.resolve(process.cwd(), "data.db");
-console.log("Connecting to database at:", dbPath);
+const url = process.env.DATABASE_URL;
+const authToken = process.env.DATABASE_AUTH_TOKEN;
 
-const client = createClient({ url: `file:${dbPath}` });
+let client;
+
+if (url && authToken) {
+    console.log("Connecting to LibSQL/Turso at:", url);
+    client = createClient({ url, authToken });
+} else {
+    const dbPath = path.resolve(process.cwd(), "data.db");
+    console.log("Connecting to database at:", dbPath);
+    client = createClient({ url: `file:${dbPath}` });
+}
 
 // Category slug mapping from ServiceCategory enum
 const categorySlugMap: Record<string, string> = {

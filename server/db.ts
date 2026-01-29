@@ -34,6 +34,10 @@ export async function getDb() {
         _db = drizzle(client);
         console.log("[Database] Connected to LibSQL/Turso at:", ENV.databaseUrl);
       } else {
+        if (ENV.isProduction) {
+          console.error("[Database] Missing DATABASE_URL or DATABASE_AUTH_TOKEN in production.");
+          throw new Error("Database configuration error: Missing DATABASE_URL or DATABASE_AUTH_TOKEN in production.");
+        }
         // Local Dev DB
         const dbPath = path.resolve(process.cwd(), "data.db");
         // Ensure directory exists if needed, but usually cwd is fine
