@@ -23,10 +23,13 @@ export default function Join() {
     description: "",
     services: "",
     website: "",
+    foundedYear: "",
+    categoryIds: [] as number[],
   });
   const [submitted, setSubmitted] = useState(false);
 
   const { data: cities } = trpc.cities.list.useQuery();
+  const { data: categories } = trpc.categories.list.useQuery();
 
   const submitApplication = trpc.applications.submit.useMutation({
     onSuccess: () => {
@@ -41,8 +44,16 @@ export default function Join() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitApplication.mutate({
-      ...formData,
+      companyName: formData.companyName,
+      contactPerson: formData.contactPerson,
+      contactPhone: formData.contactPhone,
+      contactEmail: formData.contactEmail,
+      description: formData.description,
+      services: formData.services,
+      website: formData.website,
       cityId: formData.cityId ? Number(formData.cityId) : undefined,
+      foundedYear: formData.foundedYear ? Number(formData.foundedYear) : undefined,
+      categoryIds: formData.categoryIds,
     });
   };
 
@@ -234,27 +245,70 @@ export default function Join() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="website">公司官网</Label>
+                    <Label htmlFor="foundedYear">成立年份 *</Label>
                     <Input
-                      id="website"
-                      name="website"
-                      value={formData.website}
+                      id="foundedYear"
+                      name="foundedYear"
+                      type="number"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={formData.foundedYear}
                       onChange={handleChange}
-                      placeholder="如：www.example.com"
+                      placeholder="如：2015"
+                      required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="services">主营服务 *</Label>
+                  <Label htmlFor="website">公司官网</Label>
                   <Input
-                    id="services"
-                    name="services"
-                    value={formData.services}
+                    id="website"
+                    name="website"
+                    value={formData.website}
                     onChange={handleChange}
-                    placeholder="如：品牌策略、包装设计、社媒营销"
-                    required
+                    placeholder="如：www.example.com"
                   />
+                </div>
+
+                <div className="space-y-3">
+                  <Label>主营服务 (多选) *</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 border rounded-lg bg-card shadow-sm">
+                    {categories?.map((category) => (
+                      <div key={category.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`category-${category.id}`}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          checked={formData.categoryIds.includes(category.id)}
+                          onChange={(e) => {
+                            const id = category.id;
+                            setFormData(prev => {
+                              const newIds = e.target.checked
+                                ? [...prev.categoryIds, id]
+                                : prev.categoryIds.filter(c => c !== id);
+
+                              // Auto-generate services string from selected categories
+                              const selectedNames = categories
+                                .filter(c => newIds.includes(c.id))
+                                .map(c => c.name)
+                                .join("、");
+
+                              return { ...prev, categoryIds: newIds, services: selectedNames };
+                            });
+                          }}
+                        />
+                        <Label htmlFor={`category-${category.id}`} className="cursor-pointer text-sm font-normal">
+                          {category.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  {formData.categoryIds.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1 text-red-500">
+                      请至少选择一项服务
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">

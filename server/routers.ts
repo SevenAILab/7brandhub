@@ -197,6 +197,8 @@ export const appRouter = router({
         description: z.string().min(10),
         services: z.string().min(1),
         website: z.string().optional(),
+        foundedYear: z.number().optional(),
+        categoryIds: z.array(z.number()).min(1),
       }))
       .mutation(async ({ input }) => {
         await db.createProviderApplication({
@@ -208,6 +210,8 @@ export const appRouter = router({
           description: input.description,
           services: input.services,
           website: input.website,
+          foundedYear: input.foundedYear,
+          categoryIds: JSON.stringify(input.categoryIds),
         });
         return { success: true };
       }),
@@ -248,7 +252,7 @@ export const appRouter = router({
             const slug = `provider-${Date.now()}`;
 
             // Create the provider with cityId from application
-            await db.createProvider({
+            const providerId = await db.createProvider({
               name: application.companyName,
               slug,
               description: application.description,
@@ -257,11 +261,24 @@ export const appRouter = router({
               phone: application.contactPhone,
               email: application.contactEmail,
               cityId: application.cityId || undefined,
+              foundedYear: application.foundedYear || undefined,
               status: 'approved',
               verified: false,
               featured: false,
               weight: 50,
             });
+
+            // Set categories
+            if (application.categoryIds) {
+              try {
+                const categoryIds = JSON.parse(application.categoryIds);
+                if (Array.isArray(categoryIds) && categoryIds.length > 0) {
+                  await db.setProviderCategories(providerId, categoryIds);
+                }
+              } catch (e) {
+                console.error("Failed to parse categoryIds from application", e);
+              }
+            }
           }
         }
 

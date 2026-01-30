@@ -159,6 +159,8 @@ export const providerApplications = sqliteTable("provider_applications", {
   contactPhone: text("contactPhone").notNull(),
   contactEmail: text("contactEmail"),
   cityId: integer("cityId"),
+  foundedYear: integer("foundedYear"),
+  categoryIds: text("categoryIds"), // JSON array of category IDs
   services: text("services"),
   website: text("website"),
   description: text("description"),

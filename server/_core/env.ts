@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export const ENV: {
   cookieSecret: string;
   databaseUrl: string;

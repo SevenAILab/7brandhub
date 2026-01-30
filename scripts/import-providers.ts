@@ -87,6 +87,14 @@ async function importProviders() {
 
     // Add any missing categories
     const categoriesToAdd = [
+        { name: '品牌策略', slug: 'brand-strategy', description: '品牌定位、战略规划、品牌架构' },
+        { name: '视觉设计', slug: 'visual-design', description: '品牌VI、LOGO设计、平面视觉' },
+        { name: '包装设计', slug: 'packaging-design', description: '产品包装、礼盒设计、结构创新' },
+        { name: '空间设计', slug: 'space-design', description: '商业空间、展陈设计、办公环境' },
+        { name: '品牌营销', slug: 'brand-marketing', description: '整合营销、创意传播、内容营销' },
+        { name: '数字营销', slug: 'digital-marketing', description: '社交媒体运营、流量投放、数字化互动' },
+        { name: '电商运营', slug: 'ecommerce', description: '电商代运营、店铺装修、数据增长' },
+        { name: '公关传播', slug: 'public-relations', description: '媒体关系、声誉管理、危机公关' },
         { name: '出海营销', slug: 'overseas-marketing', description: '品牌出海、海外市场拓展、跨境营销' }
     ];
     for (const cat of categoriesToAdd) {
