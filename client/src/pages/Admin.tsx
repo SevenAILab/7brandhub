@@ -242,6 +242,7 @@ function ProvidersManagement() {
 
   const { data: providersData, isLoading } = trpc.admin.providers.useQuery({
     limit: 100,
+    search: searchQuery || undefined,
   });
 
   const { data: categories } = trpc.categories.list.useQuery();
@@ -283,10 +284,7 @@ function ProvidersManagement() {
     },
   });
 
-  const filteredProviders = providersData?.providers.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.englishName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProviders = providersData?.providers;
 
   return (
     <>
