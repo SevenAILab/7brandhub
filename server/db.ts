@@ -166,6 +166,16 @@ export async function getProviders(options: {
     );
   }
 
+  // Filter by Category ID using a subquery
+  if (options.categoryId) {
+    const subQuery = db
+      .select({ providerId: providerCategories.providerId })
+      .from(providerCategories)
+      .where(eq(providerCategories.categoryId, options.categoryId));
+
+    conditions.push(inArray(providers.id, subQuery));
+  }
+
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   // Build query
@@ -192,7 +202,7 @@ export async function getProviders(options: {
     query = query.offset(options.offset) as typeof query;
   }
 
-  let providerList = await query;
+  const providerList = await query;
 
   // Count query
   const countResult = await db
@@ -200,22 +210,6 @@ export async function getProviders(options: {
     .from(providers)
     .where(whereClause);
   const total = countResult[0]?.count || 0;
-
-  // If categoryId filter, we need to filter by junction table
-  if (options.categoryId && providerList.length > 0) {
-    const providerIds = providerList.map((p) => p.id);
-    const categoryLinks = await db
-      .select()
-      .from(providerCategories)
-      .where(
-        and(
-          inArray(providerCategories.providerId, providerIds),
-          eq(providerCategories.categoryId, options.categoryId)
-        )
-      );
-    const validIds = new Set(categoryLinks.map((c) => c.providerId));
-    providerList = providerList.filter((p) => validIds.has(p.id));
-  }
 
   // Fetch categories for all providers in the list
   if (providerList.length > 0) {
@@ -248,7 +242,7 @@ export async function getProviders(options: {
 
     return {
       providers: providersWithCategories,
-      total: options.categoryId ? providerList.length : total
+      total
     };
   }
 

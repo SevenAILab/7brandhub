@@ -331,7 +331,7 @@ export const appRouter = router({
         email: z.string().optional(),
         verified: z.boolean().default(false),
         featured: z.boolean().default(false),
-        weight: z.number().default(0),
+        weight: z.number().default(50),
         status: z.enum(['pending', 'approved', 'rejected']).default('approved'),
         categoryIds: z.array(z.number()).optional(),
       }))
