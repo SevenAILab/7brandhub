@@ -7,10 +7,12 @@ import path from "path";
 import { PROVIDERS, CITIES } from "../constants";
 import { ServiceCategory } from "../types";
 
-const url = process.env.DATABASE_URL;
-const authToken = process.env.DATABASE_AUTH_TOKEN;
+const url = process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL;
+const authToken = process.env.DATABASE_AUTH_TOKEN ?? process.env.TURSO_AUTH_TOKEN;
 
-let client;
+import { Client } from "@libsql/client";
+
+let client: Client;
 
 if (url && authToken) {
     console.log("Connecting to LibSQL/Turso at:", url);

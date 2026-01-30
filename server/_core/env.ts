@@ -11,8 +11,8 @@ export const ENV: {
   googleMapsApiKey: string;
 } = {
   cookieSecret: process.env.JWT_SECRET ?? "dev-secret-key-change-in-production",
-  databaseUrl: process.env.DATABASE_URL ?? "",
-  databaseAuthToken: process.env.DATABASE_AUTH_TOKEN ?? "",
+  databaseUrl: process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL ?? "",
+  databaseAuthToken: process.env.DATABASE_AUTH_TOKEN ?? process.env.TURSO_AUTH_TOKEN ?? "",
   adminEmail: process.env.ADMIN_EMAIL ?? "",
   isProduction: process.env.NODE_ENV === "production",
   // AI / External Services (Optional defaults)
