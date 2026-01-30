@@ -235,14 +235,20 @@ function DashboardStats() {
 // Providers Management Component
 function ProvidersManagement() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingProvider, setEditingProvider] = useState<any>(null);
   const [deletingProvider, setDeletingProvider] = useState<any>(null);
   const utils = trpc.useUtils();
 
   const { data: providersData, isLoading } = trpc.admin.providers.useQuery({
-    limit: 100,
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
     search: searchQuery || undefined,
+    categoryId: selectedCategoryId ? Number(selectedCategoryId) : undefined,
   });
 
   const { data: categories } = trpc.categories.list.useQuery();
@@ -296,12 +302,28 @@ function ProvidersManagement() {
               <CardDescription>管理平台上的所有服务商 ({providersData?.total || 0} 个)</CardDescription>
             </div>
             <div className="flex items-center gap-4">
+              <select
+                value={selectedCategoryId}
+                onChange={(e) => {
+                  setSelectedCategoryId(e.target.value);
+                  setPage(1); // Reset to first page on filter change
+                }}
+                className="h-9 w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="">所有分类</option>
+                {categories?.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="搜索服务商..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPage(1); // Reset to first page on search
+                  }}
                   className="pl-10 w-64"
                 />
               </div>
@@ -320,93 +342,122 @@ function ProvidersManagement() {
               ))}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>服务商</TableHead>
-                  <TableHead>城市</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>浏览量</TableHead>
-                  <TableHead>权重</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredProviders?.map((provider) => (
-                  <TableRow key={provider.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center overflow-hidden">
-                          {provider.logo ? (
-                            <img src={provider.logo} alt="" className="w-full h-full object-contain" />
-                          ) : (
-                            <span className="text-sm font-bold text-muted-foreground">
-                              {provider.name.charAt(0)}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{provider.name}</p>
-                          {provider.shortDescription && (
-                            <p className="text-xs text-muted-foreground truncate max-w-[200px]">{provider.shortDescription}</p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {cities?.find(c => c.id === provider.cityId)?.name || '-'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {provider.verified && (
-                          <Badge variant="default" className="text-xs">认证</Badge>
-                        )}
-                        {provider.featured && (
-                          <Badge variant="secondary" className="text-xs">推荐</Badge>
-                        )}
-                        <Badge
-                          variant={provider.status === 'approved' ? 'outline' : 'destructive'}
-                          className="text-xs"
-                        >
-                          {provider.status === 'approved' ? '已上线' : provider.status === 'pending' ? '待审核' : '已拒绝'}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>{provider.viewCount || 0}</TableCell>
-                    <TableCell>{provider.weight || 0}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setEditingProvider(provider)}>
-                            <Edit className="w-4 h-4 mr-2" />
-                            编辑
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => updateProvider.mutate({ id: provider.id, verified: !provider.verified })}>
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            {provider.verified ? '取消认证' : '设为认证'}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => updateProvider.mutate({ id: provider.id, featured: !provider.featured })}>
-                            {provider.featured ? '取消推荐' : '设为推荐'}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setDeletingProvider(provider)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            删除
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>服务商</TableHead>
+                    <TableHead>城市</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>浏览量</TableHead>
+                    <TableHead>权重</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredProviders?.map((provider) => (
+                    <TableRow key={provider.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center overflow-hidden">
+                            {provider.logo ? (
+                              <img src={provider.logo} alt="" className="w-full h-full object-contain" />
+                            ) : (
+                              <span className="text-sm font-bold text-muted-foreground">
+                                {provider.name.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium">{provider.name}</p>
+                            {provider.shortDescription && (
+                              <p className="text-xs text-muted-foreground truncate max-w-[200px]">{provider.shortDescription}</p>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {cities?.find(c => c.id === provider.cityId)?.name || '-'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {provider.verified && (
+                            <Badge variant="default" className="text-xs">认证</Badge>
+                          )}
+                          {provider.featured && (
+                            <Badge variant="secondary" className="text-xs">推荐</Badge>
+                          )}
+                          <Badge
+                            variant={provider.status === 'approved' ? 'outline' : 'destructive'}
+                            className="text-xs"
+                          >
+                            {provider.status === 'approved' ? '已上线' : provider.status === 'pending' ? '待审核' : '已拒绝'}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>{provider.viewCount || 0}</TableCell>
+                      <TableCell>{provider.weight || 0}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setEditingProvider(provider)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              编辑
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => updateProvider.mutate({ id: provider.id, verified: !provider.verified })}>
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              {provider.verified ? '取消认证' : '设为认证'}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => updateProvider.mutate({ id: provider.id, featured: !provider.featured })}>
+                              {provider.featured ? '取消推荐' : '设为推荐'}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setDeletingProvider(provider)}
+                              className="text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              删除
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm text-muted-foreground">
+                  显示 {(page - 1) * pageSize + 1} 到 {Math.min(page * pageSize, providersData?.total || 0)} 条，共 {providersData?.total || 0} 条
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-1" />
+                    上一页
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(p => p + 1)}
+                    disabled={page * pageSize >= (providersData?.total || 0)}
+                  >
+                    下一页
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

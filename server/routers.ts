@@ -307,7 +307,8 @@ export const appRouter = router({
       .input(z.object({
         status: z.enum(['pending', 'approved', 'rejected']).optional(),
         search: z.string().optional(),
-        limit: z.number().min(1).max(100).default(50),
+        categoryId: z.number().optional(),
+        limit: z.number().min(1).max(1000).default(50),
         offset: z.number().min(0).default(0),
       }))
       .query(async ({ ctx, input }) => {
