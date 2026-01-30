@@ -14,8 +14,8 @@ import {
   providerApplications, InsertProviderApplication,
   contactInquiries, InsertContactInquiry,
   blogPosts, InsertBlogPost, BlogPost
-} from "../drizzle/schema";
-import { ENV } from './_core/env';
+} from "../drizzle/schema.js";
+import { ENV } from './_core/env.js';
 import path from "path";
 
 let _db: ReturnType<typeof drizzle> | null = null;

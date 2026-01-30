@@ -1,8 +1,8 @@
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const.js";
 import { Request, Response, Application } from "express";
-import * as db from "../db";
-import { getSessionCookieOptions } from "./cookies";
-import { authService } from "./sdk";
+import * as db from "../db.js";
+import { getSessionCookieOptions } from "./cookies.js";
+import { authService } from "./sdk.js";
 import { z } from "zod";
 
 const loginSchema = z.object({
