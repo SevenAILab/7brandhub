@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.7brandhub.com/sitemap.xml
+
+# Human-friendly note (comment only)
+# We welcome crawlers and AI indexing agents. For machine-readable crawl policy see: /ai-allow.json

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, User, ChevronLeft, Share2 } from "lucide-react";
 import NotFound from "./NotFound";
 import { toast } from "sonner";
+import { SEO } from "@/components/SEO";
 
 export default function BlogPost() {
     const { slug } = useParams<{ slug: string }>();
@@ -50,8 +51,50 @@ export default function BlogPost() {
         return <NotFound />;
     }
 
+    const articleSchema = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `https://www.7brandhub.com/blog/${slug}`
+        },
+        "headline": post.title,
+        "description": post.excerpt || post.content.substring(0, 150).replace(/<[^>]*>/g, '') + '...',
+        "image": post.coverImage ? `https://www.7brandhub.com${post.coverImage}` : undefined,
+        "author": {
+            "@type": "Person",
+            "name": post.author || "7BrandHub"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "7BrandHub",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.7brandhub.com/logo.png"
+            }
+        },
+        "datePublished": post.createdAt ? new Date(post.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        "dateModified": post.updatedAt ? new Date(post.updatedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    });
+
+    const breadcrumbSchema = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://www.7brandhub.com/" },
+            { "@type": "ListItem", "position": 2, "name": "品牌洞察", "item": "https://www.7brandhub.com/blog/" },
+            { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.7brandhub.com/blog/${slug}` }
+        ]
+    });
+
     return (
         <div className="min-h-screen bg-background pb-20">
+            <SEO
+                title={post.title}
+                description={post.excerpt || post.content.substring(0, 150).replace(/<[^>]*>/g, '')}
+                image={post.coverImage || undefined}
+                schema={`[${articleSchema}, ${breadcrumbSchema}]`}
+            />
             {/* Header / Breadcrumb */}
             <div className="bg-secondary/30 border-b border-border/50 sticky top-0 z-20 backdrop-blur-md bg-background/80">
                 <div className="container py-4 flex justify-between items-center">

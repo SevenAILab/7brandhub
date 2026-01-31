@@ -42,12 +42,25 @@ export default function Home() {
     }
   };
 
+  const homeSchema = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "7BrandHub",
+    "url": "https://www.7brandhub.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.7brandhub.com/providers?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  });
+
   return (
     <div className="flex flex-col gap-20 pb-20">
       <SEO
         title="首页"
         description="7BrandHub - 连接品牌与优质服务商，致力于帮助品牌方快速找到靠谱的本地服务商。"
         keywords="品牌服务, 营销策划, 包装设计, 小红书营销, 上海服务商"
+        schema={homeSchema}
       />
       {/* Hero Section */}
       <section className="relative pt-10 pb-20 md:pt-20 md:pb-32 overflow-hidden">

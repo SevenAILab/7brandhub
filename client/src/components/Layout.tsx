@@ -13,6 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Helmet } from "react-helmet-async";
+
+const organizationSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "7BrandHub",
+  "url": "https://www.7brandhub.com",
+  "logo": "https://www.7brandhub.com/logo.png", // Placeholder, user to replace
+  "sameAs": [
+    "https://xhslink.com/m/1py8IgVsmbZ",
+    "https://x.com/huang63676"
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+86-18684766694",
+      "contactType": "customer service",
+      "email": "293580730@qq.com",
+      "areaServed": "CN"
+    }
+  ]
+});
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
@@ -56,6 +78,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-primary/20 selection:text-primary">
+      <Helmet>
+        <script type="application/ld+json">{organizationSchema}</script>
+      </Helmet>
       {/* Navigation */}
       <header
         className={cn(

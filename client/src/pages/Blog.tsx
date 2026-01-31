@@ -11,9 +11,22 @@ import { SEO } from "@/components/SEO";
 export default function Blog() {
     const { data: posts, isLoading } = trpc.blog.list.useQuery({ limit: 20 });
 
+    const breadcrumbSchema = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://www.7brandhub.com/" },
+            { "@type": "ListItem", "position": 2, "name": "品牌洞察", "item": "https://www.7brandhub.com/blog/" }
+        ]
+    });
+
     return (
         <div className="min-h-screen bg-background pb-20">
-            <SEO title="品牌洞察" description="探索最新的品牌策略、设计趋势和市场营销见解" />
+            <SEO
+                title="品牌洞察"
+                description="探索最新的品牌策略、设计趋势和市场营销见解"
+                schema={breadcrumbSchema}
+            />
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-secondary/30 py-16 md:py-24">
                 <div className="container relative z-10">

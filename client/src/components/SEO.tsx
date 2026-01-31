@@ -5,9 +5,10 @@ interface SEOProps {
     description?: string;
     keywords?: string;
     image?: string;
+    schema?: string;
 }
 
-export function SEO({ title, description, keywords, image }: SEOProps) {
+export function SEO({ title, description, keywords, image, schema }: SEOProps) {
     const siteName = "7BrandHub";
     const defaultDescription = "7BrandHub - 连接品牌与优质服务商，帮助品牌方快速找到靠谱的本地服务商，让每一次合作都更简单、更高效。";
 
@@ -29,6 +30,13 @@ export function SEO({ title, description, keywords, image }: SEOProps) {
             <meta name="twitter:title" content={`${title} | ${siteName}`} />
             <meta name="twitter:description" content={description || defaultDescription} />
             {image && <meta name="twitter:image" content={image} />}
+
+            {/* Schema.org Structured Data */}
+            {schema && (
+                <script type="application/ld+json">
+                    {schema}
+                </script>
+            )}
         </Helmet>
     );
 }
