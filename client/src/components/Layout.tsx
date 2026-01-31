@@ -43,12 +43,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+      if (isMobileMenuOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "unset";
+      }
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }, [isMobileMenuOpen]);
+
+  return (
     <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-primary/20 selection:text-primary">
       {/* Navigation */}
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
-          scrolled ? "bg-background/80 backdrop-blur-md border-b border-border/50 py-3" : "bg-transparent py-5"
+          scrolled || isMobileMenuOpen ? "bg-background/80 backdrop-blur-md border-b border-border/50 py-3" : "bg-transparent py-5"
         )}
       >
         <div className="container flex items-center justify-between">
@@ -162,72 +175,72 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+      </header>
 
-        {/* Mobile Nav Overlay */}
-        <div
-          className={cn(
-            "fixed inset-0 bg-background z-40 flex flex-col pt-24 px-6 transition-transform duration-300 ease-in-out md:hidden",
-            isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"
-          )}
-        >
-          <nav className="flex flex-col gap-6 text-lg font-medium">
-            <Link href="/">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">首页</span>
-            </Link>
-            <Link href="/providers">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">找服务商</span>
-            </Link>
-            <Link href="/categories">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">服务分类</span>
-            </Link>
-            <Link href="/join">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">服务商入驻</span>
-            </Link>
-            <Link href="/about">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">关于我们</span>
-            </Link>
-            <Link href="/blog">
-              <span className="py-2 border-b border-border/50 block cursor-pointer">品牌洞察</span>
-            </Link>
+      {/* Mobile Nav Overlay (Moved outside header to avoid nested fixed positioning issues) */}
+      <div
+        className={cn(
+          "fixed inset-0 bg-background z-40 flex flex-col pt-24 px-6 transition-transform duration-300 ease-in-out md:hidden",
+          isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"
+        )}
+      >
+        <nav className="flex flex-col gap-6 text-lg font-medium">
+          <Link href="/">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">首页</span>
+          </Link>
+          <Link href="/providers">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">找服务商</span>
+          </Link>
+          <Link href="/categories">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">服务分类</span>
+          </Link>
+          <Link href="/join">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">服务商入驻</span>
+          </Link>
+          <Link href="/about">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">关于我们</span>
+          </Link>
+          <Link href="/blog">
+            <span className="py-2 border-b border-border/50 block cursor-pointer">品牌洞察</span>
+          </Link>
 
-            {isAuthenticated && user && (
-              <>
-                <Link href="/favorites">
+          {isAuthenticated && user && (
+            <>
+              <Link href="/favorites">
+                <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
+                  <Heart className="w-5 h-5" /> 我的收藏
+                </span>
+              </Link>
+              {user.role === 'admin' && (
+                <Link href="/admin">
                   <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
-                    <Heart className="w-5 h-5" /> 我的收藏
+                    <Settings className="w-5 h-5" /> 管理后台
                   </span>
                 </Link>
-                {user.role === 'admin' && (
-                  <Link href="/admin">
-                    <span className="py-2 border-b border-border/50 flex items-center gap-2 cursor-pointer">
-                      <Settings className="w-5 h-5" /> 管理后台
-                    </span>
-                  </Link>
-                )}
-              </>
-            )}
-
-            <div className="pt-4 flex flex-col gap-4">
-              {isAuthenticated ? (
-                <Button
-                  variant="outline"
-                  className="w-full rounded-full py-6 text-lg"
-                  onClick={handleLogout}
-                >
-                  退出登录
-                </Button>
-              ) : (
-                <Button
-                  className="w-full rounded-full py-6 text-lg"
-                  onClick={handleLogin}
-                >
-                  登录 / 注册
-                </Button>
               )}
-            </div>
-          </nav>
-        </div>
-      </header>
+            </>
+          )}
+
+          <div className="pt-4 flex flex-col gap-4">
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                className="w-full rounded-full py-6 text-lg"
+                onClick={handleLogout}
+              >
+                退出登录
+              </Button>
+            ) : (
+              <Button
+                className="w-full rounded-full py-6 text-lg"
+                onClick={handleLogin}
+              >
+                登录 / 注册
+              </Button>
+            )}
+          </div>
+        </nav>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 pt-20">
