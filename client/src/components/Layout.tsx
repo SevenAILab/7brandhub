@@ -42,18 +42,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setLocation("/");
   };
 
-  return (
-    // Lock body scroll when mobile menu is open
-    useEffect(() => {
-      if (isMobileMenuOpen) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "unset";
-      }
-      return () => {
-        document.body.style.overflow = "unset";
-      };
-    }, [isMobileMenuOpen]);
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-primary/20 selection:text-primary">
