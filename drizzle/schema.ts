@@ -111,12 +111,33 @@ export type InsertProviderService = typeof providerServices.$inferInsert;
 export const providerCases = sqliteTable("provider_cases", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   providerId: integer("providerId").notNull(),
+
+  // Core Info
   title: text("title").notNull(),
   clientName: text("clientName"),
-  description: text("description"),
-  imageUrl: text("imageUrl"),
+  industry: text("industry"),
+  serviceType: text("serviceType"),
+
+  // Deep Content
+  description: text("description"), // Summary
+  challenge: text("challenge"),     // The problem
+  solution: text("solution"),       // The approach
+  result: text("result"),           // The outcome
+
+  // Media
+  coverImage: text("cover_image"),
+  images: text("images"),           // JSON array of image URLs
+  videoUrl: text("video_url"),
+
+  // Meta
+  tags: text("tags"),               // JSON array of tags
   sortOrder: integer("sortOrder").default(0),
+
+  // AI
+  embedding: text("embedding"),     // JSON or serialized vector
+
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
 export type ProviderCase = typeof providerCases.$inferSelect;

@@ -330,6 +330,7 @@ export async function setProviderServices(providerId: number, services: { name: 
 
 // ==================== Provider Cases ====================
 
+
 export async function getProviderCases(providerId: number) {
   const db = await getDb();
   return db.select().from(providerCases)
@@ -337,9 +338,20 @@ export async function getProviderCases(providerId: number) {
     .orderBy(asc(providerCases.sortOrder));
 }
 
+export async function getProviderCaseById(id: number) {
+  const db = await getDb();
+  const result = await db.select().from(providerCases).where(eq(providerCases.id, id)).limit(1);
+  return result[0];
+}
+
 export async function createProviderCase(data: InsertProviderCase) {
   const db = await getDb();
   await db.insert(providerCases).values(data);
+}
+
+export async function updateProviderCase(id: number, data: Partial<InsertProviderCase>) {
+  const db = await getDb();
+  await db.update(providerCases).set({ ...data, updatedAt: new Date() }).where(eq(providerCases.id, id));
 }
 
 export async function deleteProviderCase(id: number) {

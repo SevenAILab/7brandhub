@@ -503,6 +503,110 @@ export const appRouter = router({
       }),
   }),
 
+  // Portfolio
+  portfolio: router({
+    getByProviderId: publicProcedure
+      .input(z.object({ providerId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProviderCases(input.providerId);
+      }),
+
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProviderCaseById(input.id);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1),
+        clientName: z.string().optional(),
+        industry: z.string().optional(),
+        serviceType: z.string().optional(),
+        description: z.string().optional(),
+        challenge: z.string().optional(),
+        solution: z.string().optional(),
+        result: z.string().optional(),
+        coverImage: z.string().optional(),
+        images: z.string().optional(), // JSON
+        videoUrl: z.string().optional(),
+        tags: z.string().optional(), // JSON
+        sortOrder: z.number().default(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Ensure user is a provider or admin
+        // For now, assuming user linking logic or admin only, or if user.role === 'provider'
+        // But we don't have providerId in ctx.user directly unless we link them.
+        // For Phase 1, strictly admin or let's assume valid provider check:
+        // FIXME: Temporary allowing admin to create anywhere, or provider can create for themselves if we had that link.
+        // For now, let's require providerId in input for Admin, or derive from Context if we had it.
+        // Let's add providerId to input for flexibility, but secure it.
+        if (ctx.user.role !== 'admin' && ctx.user.role !== 'provider') {
+          throw new Error("Unauthorized");
+        }
+
+        // TODO: If provider, ensure they own the provider record.
+        // Just fail-safe: require providerId in input.
+        throw new Error("Please specify providerId (Access control pending)");
+      }),
+
+    // Admin override create
+    createForProvider: protectedProcedure
+      .input(z.object({
+        providerId: z.number(),
+        title: z.string().min(1),
+        clientName: z.string().optional(),
+        industry: z.string().optional(),
+        serviceType: z.string().optional(),
+        description: z.string().optional(),
+        challenge: z.string().optional(),
+        solution: z.string().optional(),
+        result: z.string().optional(),
+        coverImage: z.string().optional(),
+        images: z.string().optional(),
+        videoUrl: z.string().optional(),
+        tags: z.string().optional(),
+        sortOrder: z.number().default(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error("Unauthorized");
+        await db.createProviderCase(input);
+        return { success: true };
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        clientName: z.string().optional(),
+        industry: z.string().optional(),
+        serviceType: z.string().optional(),
+        description: z.string().optional(),
+        challenge: z.string().optional(),
+        solution: z.string().optional(),
+        result: z.string().optional(),
+        coverImage: z.string().optional(),
+        images: z.string().optional(),
+        videoUrl: z.string().optional(),
+        tags: z.string().optional(),
+        sortOrder: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error("Unauthorized");
+        const { id, ...data } = input;
+        await db.updateProviderCase(id, data);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error("Unauthorized");
+        await db.deleteProviderCase(input.id);
+        return { success: true };
+      }),
+  }),
+
   // Blog
   blog: router({
     list: publicProcedure
